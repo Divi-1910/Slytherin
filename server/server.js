@@ -1,34 +1,95 @@
-const express = require("express");
-const fs = require("fs");
-const {exec} = require("child_process");
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const { exec } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+
 const app = express();
+app.use(bodyParser.json());
+app.use(cors());
 
-// Middleware to parse JSON body
-app.use(express.json());
-app.use(express.urlencoded);
+app.post('/compile', (req, res) => {
+  const code = req.body.code;
+  const filePath = path.join(__dirname, 'code.cpp');
+  const outputPath = path.join(__dirname, 'output');
 
-app.post("/compile", (req, res) => {
-	const code = req.body.code;
+  fs.writeFileSync(filePath, code);
 
-	if (!code) {
-		return res.status(400).send("Code is required.");
-	}
+  const command = process.platform === 'win32'
+    ? `g++ "${filePath}" -o "${outputPath}" && "${outputPath}.exe"`
+    : `g++ "${filePath}" -o "${outputPath}" && ./output`;
 
-	const filePath = "./tempCode.cpp";
+  const startTime = process.hrtime();  // Start measuring time
 
-	fs.writeFile(filePath, code, (err) => {
-		if (err) {
-			return res.status(500).send("Failed to write code to file.");
-		}
+  exec(command, (err, stdout, stderr) => {
+    const endTime = process.hrtime(startTime);  // End measuring time
+    const executionTime = endTime[0] * 1000 + endTime[1] / 1000000;  // Convert to milliseconds
 
-		exec(`g++ ${filePath} -o output && ./output`, (error, stdout, stderr) => {
-			if (error) {
-				return res.status(500).send(stderr);
-			}
-			res.send({output: stdout});
-		});
-	});
+    const memoryUsage = process.memoryUsage();
+    const memoryUsageInMB = {
+      rss: (memoryUsage.rss / 1024 / 1024).toFixed(2),       
+      heapTotal: (memoryUsage.heapTotal / 1024 / 1024).toFixed(2),
+      heapUsed: (memoryUsage.heapUsed / 1024 / 1024).toFixed(2),
+      external: (memoryUsage.external / 1024 / 1024).toFixed(2),
+    };
+
+    if (err) {
+      res.send(`Error:\n${stderr}`);
+    } else {
+      res.send(`Output:\n${stdout}\nExecution Time: ${executionTime.toFixed(3)} ms\nMemory Usage (in MB): ${JSON.stringify(memoryUsageInMB, null, 2)}`);
+    }
+  });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(5000, () => console.log('Server is running on http://localhost:5000'));
+
+// const express = require('express');
+// const bodyParser = require('body-parser');
+// const cors = require('cors');
+// const { exec } = require('child_process');
+// const fs = require('fs');
+// const path = require('path');
+
+// const app = express();
+// app.use(bodyParser.json());
+// app.use(cors());
+
+// app.post('/compile', (req, res) => {
+//   const code = req.body.code;
+//   const filePath = path.join(__dirname, 'code.cpp');
+//   const outputPath = path.join(__dirname, 'output.exe');  // For Windows
+
+//   // Save the C++ code to a file
+//   fs.writeFileSync(filePath, code);
+
+//   // Command to compile the C++ code
+//   const compileCommand = `g++ "${filePath}" -o "${outputPath}"`;
+
+//   // Command to measure memory usage using PowerShell
+//   const measureMemoryCommand = `powershell.exe -File "${path.join(__dirname, 'measure-memory.ps1')}" -ExecutablePath "${outputPath}"`;
+
+//   const startTime = process.hrtime();  // Start measuring time
+
+//   // Compile the C++ code
+//   exec(compileCommand, (compileErr) => {
+//     if (compileErr) {
+//       return res.send(`Error during compilation:\n${compileErr}`);
+//     }
+
+//     // Run the executable and measure memory usage
+//     exec(measureMemoryCommand, (err, stdout, stderr) => {
+//       const endTime = process.hrtime(startTime);  // End measuring time
+//       const executionTime = endTime[0] * 1000 + endTime[1] / 1000000;  // Convert to milliseconds
+
+//       if (err) {
+//         return res.send(`Error during execution:\n${stderr}`);
+//       }
+
+//       // Output the result including memory usage
+//       res.send(`Output:\n${stdout}\nExecution Time: ${executionTime.toFixed(3)} ms`);
+//     });
+//   });
+// });
+
+// app.listen(5000, () => console.log('Server is running on http://localhost:5000'));
