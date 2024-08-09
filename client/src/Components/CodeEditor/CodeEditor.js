@@ -1,7 +1,5 @@
 import React, {useState} from "react";
-import CodeMirror from "@uiw/react-codemirror";
-import {cpp} from "@codemirror/lang-cpp";
-import "codemirror/theme/material-ocean.css";
+import {Editor} from "@monaco-editor/react";
 
 const CodeEditor = () => {
 	const [code, setCode] = useState("");
@@ -36,12 +34,12 @@ const CodeEditor = () => {
 	return (
 		<div className="code-editor-container">
 			<h1>C++ Code Editor</h1>
-			<CodeMirror
-				value={code}
+			<Editor
 				height="200px"
-				extensions={[cpp()]}
-				theme="material-ocean"
-				onChange={(value) => setCode(value)}
+				language="cpp"
+				theme="vs-dark"
+				value={code}
+				onChange={(value) => setCode(value || "")}
 			/>
 			<button onClick={handleCompile}>Compile and Run</button>
 			<div className="output-container">
