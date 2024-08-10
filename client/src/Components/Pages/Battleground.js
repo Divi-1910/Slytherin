@@ -1,4 +1,3 @@
-// src/components/Battleground.js
 import React, { useState } from 'react';
 import Carousel from './Carousel';
 
