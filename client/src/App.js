@@ -4,7 +4,6 @@ import Navbar from "./Components/Navbar/Navbar";
 import Playground from "./Components/Pages/Playground/Playground";
 import Battleground from "./Components/Pages/Battleground";
 import Arena from "./Components/Pages/Arena";
-import CodeEditor from "./Components/CodeEditor/CodeEditor";
 
 function App() {
 	return (
@@ -16,7 +15,6 @@ function App() {
 					<Route path="/battleground" element={<Battleground />} />
 					<Route path="/arena" element={<Arena />} />
 				</Routes>
-				<CodeEditor />
 			</div>
 		</Router>
 	);
