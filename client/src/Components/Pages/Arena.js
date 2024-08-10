@@ -67,24 +67,21 @@ const ProblemDescription = () => {
       <div className='flex flex-1 overflow-hidden'>
         {/* Problem Section */}
         <div className='p-4 w-1/2 overflow-y-auto'>
-          {/* Theme Toggle Button */}
-          <button
-            onClick={toggleTheme}
-            className='absolute top-4 right-4 p-2 rounded bg-blue-500 text-white'
-          >
-            Toggle Theme
-          </button>
+          
 
           {/* Problem heading */}
           <div className='w-full'>
+            
             <div className='text-2xl font-semibold mb-4'>
               {currentProblem.title}
             </div>
             {!loading && currentProblem && (
               <div className='flex items-center mb-4'>
+                
                 <div
                   className={`${problemDifficultyClass} inline-block rounded-full bg-opacity-20 px-3 py-1 text-xs font-medium capitalize`}
                 >
+                  
                   Easy
                 </div>
                 {solved && (
@@ -111,6 +108,16 @@ const ProblemDescription = () => {
                   onClick={handleStar}
                 >
                   {starred ? <AiFillStar /> : <TiStarOutline />}
+                </div>
+                <div className='cursor-pointer hover:bg-gray-700 rounded p-2 ml-4 text-xl transition-colors duration-200'
+                  >
+                   {/* Theme Toggle Button */}
+           <button
+            onClick={toggleTheme}
+            
+          >
+            Change Theme
+          </button>
                 </div>
               </div>
             )}
@@ -145,7 +152,9 @@ const ProblemDescription = () => {
               <strong>Constraints:</strong>
               <p className='ml-5 mt-2'>{currentProblem.constraints}</p>
             </div>
+           
           </div>
+          
         </div>
 
         {/* Code Editor Section */}

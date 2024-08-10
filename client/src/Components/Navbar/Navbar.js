@@ -12,7 +12,7 @@ function Navbar() {
 						className="h-10 w-10 rounded-full border-2 border-green-600 shadow-sm hover:shadow-green-400 transition-shadow duration-300"
 					/>
 					<span className="text-gray-200 text-2xl font-extrabold tracking-wide font-serif">
-						Slytherin
+						<Link to="/" >Slytherin</Link>
 					</span>
 				</div>
 				<div className="flex space-x-6">
