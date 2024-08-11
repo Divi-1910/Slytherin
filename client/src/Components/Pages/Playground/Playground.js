@@ -9,13 +9,16 @@ function CodeEditor() {
 
 	const compileAndRun = async () => {
 		try {
-			const response = await fetch("http://localhost:5000/compile", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({code, input}),
-			});
+			const response = await fetch(
+				"http://localhost:5000/api/playground/compile",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({code, input}),
+				}
+			);
 
 			const data = await response.text();
 
